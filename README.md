@@ -4,7 +4,7 @@ jUI (json UserInterface) uses JSON to generate an Userinterface from it.
 - Not as quick as native implementations (HTML, Android Layouts)
 - Uses an completely new syntax
 - Only some predefined Views
-- 
+
 ##pros
 - Also quick on mobile devices (after loaded the jUI-Library once)
 - lesser overhead as XML
