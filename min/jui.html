@@ -1,0 +1,132 @@
+<html>
+
+<head>
+    <script src="jui.full.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+            window.jui.init();
+            window.jui.clean();
+            //window.jui.requestParse('index.json');
+
+            window.jui.parse(
+                [
+                    {
+                        "type":"text",
+                        "value":"test",
+                        "color":"#FF0000"
+                    },
+                    {
+                        "type":"text",
+                        "value":"sajdhkas",
+                        "align":"RIGHT",
+                        "marginRight":"15"
+                    },{
+                        "type":"heading",
+                        "value":"Test"
+                    },{
+                        "type":"heading",
+                        "value":"Test",
+                        "size":"small"
+                    },{
+                        "type":"input",
+                        "value":"test",
+                        "name":"Test"
+                    },{
+                        "type":"input",
+                        "value":"test",
+                        "preset":"textarea",
+                        "name":"sadas"
+                    },{
+                        "type":"file",
+                        "name":"test54"
+                    },{
+                        "type":"input",
+                        "value":"test",
+                        "preset":"date",
+                        "name":"asdsaddsa"
+                    },{"type":"nl"},{"type":"hline"},{
+                        "type":"input",
+                        "preset":"number",
+                        "name":"asdasd"
+                    },{
+                        "type":"input",
+                        "preset":"password",
+                        "name":"Teasdasst"
+                    },{
+                        "type":"button",
+                        "value":"Teasdasst",
+                        "click":"submit()"
+                    },{
+                        "type":"checkbox",
+                        "name":"test",
+                        "label":"Testlabel - Checkbox"
+                    },{"type":"nl"},{
+                        "type":"image",
+                        "value":"https://pixabay.com/get/e831b80a29fc003ed1534705fb0938c9bd22ffd41db6134292f5c57ca3/tech-1495181_1920.jpg",
+                        "width":"100%"
+                    },{
+                        "type":"link",
+                        "value":"Hallo",
+                        "click":"openUrl('https://www.example.org')"
+                    },{
+                        "type":"select",
+                        "value":[["Hallo", 1], "Test"],
+                        "name":"namekjjlkdfs"
+                    },{
+                        "type":"list",
+                        "value":["Test", "Test"]
+                    },{
+                        "type":"table",
+                        "value":[
+                            ["Test", [{
+                                "type":"text",
+                                "value":"test",
+                                "color":"#FF0000"
+                            },{
+                                "type":"list",
+                                "value":["Test", "Test"]
+                            }]]
+                        ]
+                    },{
+                        "type":"frame",
+                        "html":"<html><body style=\"background: #FF0000; color: #FFFFFF\">Lorem ipsum</body></html>",
+                        "width":"100%"
+                    },{
+                        "type":"range",
+                        "value":5,
+                        "min":0,
+                        "max":10,
+                        "name":"jkashk",
+                        "label":"Testlabel: "
+                    },{
+                        "type":"container",
+                        "value":[
+                            {
+                                "type":"text",
+                                "value":"test",
+                                "color":"#FF0000"
+                            },
+                            {
+                                "type":"text",
+                                "value":"sajdhkas",
+                                "align":"RIGHT",
+                                "marginRight":"15"
+                            },{
+                                "type":"heading",
+                                "value":"Test"
+                            }
+                        ],
+                        "background":"#00FF00"
+                    }
+                ]
+            );
+        });
+    </script>
+
+</head>
+
+<body>
+</body>
+
+</html>
