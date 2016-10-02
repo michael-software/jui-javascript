@@ -70,8 +70,7 @@ window.jui.views.input = (function (jsonObject) {
                 var retval = document.createElement('input');
                 retval.setAttribute('type', 'number');
             } else if(preset === 4) {
-                var retval = document.createElement('input');
-                retval.setAttribute('type', 'date');
+                var retval = _this.date();
             } else if(preset === 5) {
                 var retval = document.createElement('input');
                 retval.setAttribute('type', 'color');
@@ -85,6 +84,9 @@ window.jui.views.input = (function (jsonObject) {
             if(!_tools.empty(value)) {
                 if(preset === 1) {
                     retval.innerHTML = value;
+                } else if(preset === 4) {
+                    retval.dataset.value = value;
+                    retval.value = value;
                 } else {
                     retval.value = value;
                 }
@@ -103,4 +105,41 @@ window.jui.views.input = (function (jsonObject) {
     };
 
     return parse(jsonObject);
+});
+
+
+window.jui.views.input.date = (function () {
+    var _this = window.jui.views.input.date;
+    var _tools = window.jui.tools;
+
+    var init = function() {
+        var button = document.createElement('input');
+        button.type = 'button';
+        button.className = 'dateButton';
+        button.value = 'Datum auswählen';
+
+        button.addEventListener('click', _this.openDatePicker, false);
+
+        return button;
+    }
+
+    _this.openDatePicker = function(event) {
+        var target = event.target;
+
+        window.jui.ui.datePicker.init(function(data) {
+            target.dataset.value = data;
+        });
+
+        if(_tools.empty(target.dataset) || _tools.empty(target.dataset.value)) {
+            var value = Math.round(new Date().getTime()/1000)
+        } else {
+            var value = target.dataset.value;
+        }
+
+        window.jui.ui.datePicker.setDate(value);
+    }
+
+    
+
+    return init();
 });
