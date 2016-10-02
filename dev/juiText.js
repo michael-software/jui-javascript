@@ -4,6 +4,7 @@ window.jui.views.text = (function (jsonObject) {
     var bold = false;
     var italic = false;
     var properties = [];
+    var shadow = null;
 
     var _this = window.jui.views.text;
     var _tools = window.jui.tools;
@@ -18,6 +19,10 @@ window.jui.views.text = (function (jsonObject) {
 
             if (!_tools.empty(jsonObject['appearance'])) {
                 _this.setAppearance(jsonObject['appearance']);
+            }
+
+            if(!_tools.empty(jsonObject['shadow'])) {
+                _this.setShadow(jsonObject['shadow'])
             }
 
             properties = jsonObject;
@@ -72,12 +77,45 @@ window.jui.views.text = (function (jsonObject) {
                 retval.style.fontStyle = 'italic';
             }
 
+            if(shadow != null) {
+                retval.style.textShadow = shadow.x + ' ' + shadow.y + ' ' + shadow.scale + ' ' + shadow.color;
+            }
+
             window.jui.views.view.addProperties(retval, properties);
 
             return retval;
         }
 
         return null;
+    };
+
+    _this.setShadow = function (pShadow) {
+        var color = '#000000';
+        if(!_tools.empty(pShadow.color)) {
+            color = pShadow.color;
+        }
+
+        var scale = '1px';
+        if(!_tools.empty(pShadow.scale)) {
+            scale = pShadow.scale + 'px';
+        }
+
+        var x = '1px';
+        if(!_tools.empty(pShadow.x)) {
+            x = pShadow.x + 'px';
+        }
+
+        var y = '1px';
+        if(!_tools.empty(pShadow.y)) {
+            y = pShadow.y + 'px';
+        }
+
+        shadow = {
+            color: color,
+            scale: scale,
+            x: x,
+            y: y
+        };
     };
 
     return parse(jsonObject);
