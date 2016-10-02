@@ -41,7 +41,11 @@ window.jui = {};
 		}
 	}
 
-	tools.requestSite = function(url, postData, callback) {
+	tools.isBoolean = function(obj) {
+		return typeof obj === 'boolean' || 
+          (typeof obj === 'object' && typeof obj.valueOf() === 'boolean');  // Thanks to: http://stackoverflow.com/questions/28814585/how-to-check-if-type-is-boolean
+	}
+	tools.requestSite = function(url, postData, headers, callback) {
 		var xhr = new XMLHttpRequest();
 
 		if(!tools.empty(postData)) {
