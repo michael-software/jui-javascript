@@ -47,15 +47,11 @@ window.jui.views.list = (function (jsonObject) {
                 li.appendChild(document.createTextNode(value[i]));
 
                 if(!_tools.empty(click) && !_tools.empty(click[i])) {
-                    li.addEventListener('click', function () {
-                        window.jui.action.call(click);
-                    }, false);
+                    li.addEventListener('click', window.jui.action.caller(click[i]), false);
                 }
 
                 if(!_tools.empty(longclick) && !_tools.empty(longclick[i])) {
-                    li.addEventListener('dblclick', function () {
-                        window.jui.action.call(longclick);
-                    }, false);
+                    li.addEventListener('contextmenu', window.jui.action.caller(longclick[i]), false);
                 }
 
                 retval.appendChild(li);

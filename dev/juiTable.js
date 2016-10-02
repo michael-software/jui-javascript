@@ -64,15 +64,11 @@ window.jui.views.table = (function (jsonObject) {
                 }
 
                 if(!_tools.empty(click) && !_tools.empty(click[i])) {
-                    tr.addEventListener('click', function () {
-                        window.jui.action.call(click);
-                    }, false);
+                    tr.addEventListener('click', window.jui.action.caller(click[i]), false);
                 }
 
                 if(!_tools.empty(longclick) && !_tools.empty(longclick[i])) {
-                    tr.addEventListener('dblclick', function () {
-                        window.jui.action.call(longclick);
-                    }, false);
+                    tr.addEventListener('contextmenu', window.jui.action.caller(longclick[i]), false);
                 }
 
                 retval.appendChild(tr);

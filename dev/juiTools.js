@@ -1,20 +1,30 @@
+window.jui = {};
+
 (function (tools, window) {
 	tools.empty = function(value) {
+		if(typeof value === "undefined" || value === undefined) {
+            return true;
+        }
+
 		if(value === null) {
 			return true;
 		}
-
-        if(value === undefined) {
-            return true;
-        }
 
 		if(value === '') {
             return true;
         }
 
-		if(value.length <= 0) {
+		if(Array.isArray(value) && value.length <= 0) {
 			return true;
 		}
+
+		if(value === 'null') {
+			return true;
+		}
+
+		if(value === 'undefined') {
+            return true;
+        }
 
         return false;
 	};
@@ -31,13 +41,42 @@
 		}
 	}
 
-	tools.requestSite = function(url, postData, callback) {
+	tools.isBoolean = function(obj) {
+		return typeof obj === 'boolean' || 
+          (typeof obj === 'object' && typeof obj.valueOf() === 'boolean');  // Thanks to: http://stackoverflow.com/questions/28814585/how-to-check-if-type-is-boolean
+	}
+
+	tools.getDaysInMonth = function(year, month) {
+		return [31, (tools.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+	}
+
+	tools.isLeapYear = function(year) {
+		return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+	}
+
+	tools.getMonthName = function(month) {
+		return window.jui.lang.get('month_names')[month];
+	}
+
+	tools.requestSite = function(url, postData, headers, callback) {
 		var xhr = new XMLHttpRequest();
 
 		if(!tools.empty(postData)) {
 			xhr.open('POST', url, true);
 		} else {
 			xhr.open('GET', url, true);
+		}
+
+		if(!tools.empty(headers) && tools.isArray(headers))
+		for(var i = 0, x = headers.length; i < x; i++) {
+			var header = headers[i];
+
+			if(!tools.empty(header.name) && !tools.empty(header.value)) {
+				var name = header.name;
+				var value = header.value;
+
+				xhr.setRequestHeader(name, value);
+			}
 		}
 
 		xhr.onload = function(e) {
@@ -51,5 +90,27 @@
 		} else {
 			xhr.send();
 		}
+	}
+
+	tools.convertHex = function (hex){
+		var length = hex.length;
+
+		if(hex.indexOf('#') == 0) {
+			if(length == 4 || length == 7) {
+				return hex;
+			} else if(length == 8 || length == 9) {
+				hex = hex.replace('#','');
+				opacity = parseInt(hex.substring(0,2), 16);
+				r = parseInt(hex.substring(2,4), 16);
+				g = parseInt(hex.substring(4,6), 16);
+				b = parseInt(hex.substring(6,8), 16);
+
+				return 'rgba('+r+','+g+','+b+','+opacity/255+')';
+			}
+		} else if(length == 3 || length == 6) {
+			return '#' + hex;
+		}
+
+		return '#000000';
 	}
 })(window.jui.tools = {}, window);

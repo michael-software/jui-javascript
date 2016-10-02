@@ -1,6 +1,6 @@
 window.jui.views.range = (function (jsonObject) {
-    var value = '';
-    var max, min;
+    var value = 0;
+    var max = 2, min = 0;
     var name = '';
     var properties = [];
 
