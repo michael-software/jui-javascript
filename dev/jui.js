@@ -1,12 +1,14 @@
-(function (jui) {
+(function (jui, _tools) {
 	var root = document.querySelector('body');
 	var parseHeadCallback = null, submitCallback = null;
 	var customSingleLineElements = [], customElements = [];
-	var _tools;
 
 	var lastLoaded = window.location.href;
 
 	var sendElements = [];
+	var beforeParseCallback = null;
+
+	var headers = null;
 	
 	jui.views = {};
 	jui.padding;
@@ -26,59 +28,68 @@
 		root.style.paddingLeft = jui.paddingLeft;
 		root.style.marginTop = 0;
 
-		document.querySelector('body').style.backgroundColor = 'transparent';
+		window.jui.ui.datePicker.abort();
 
-		_tools = window.jui.tools;
+		document.querySelector('body').style.backgroundColor = 'transparent';
 	};
 
 	jui.parse = function(jsonObject, parentElement, allElements) {
-		
-		if(jsonObject['head'] !== null && jsonObject['head'] !== undefined) {
-			parseHead(jsonObject);
-			var data = jsonObject['data'];
-		} else {
-			var data = jsonObject;
+
+		if(!_tools.empty(beforeParseCallback) && _tools.isFunction(beforeParseCallback)) {
+			var returnedBool = beforeParseCallback(jsonObject, parentElement);
 		}
+		
+		if(!_tools.isBoolean(returnedBool) || returnedBool) {
+			if(jsonObject['head'] !== null && jsonObject['head'] !== undefined) {
+				parseHead(jsonObject['head']);
+				var data = jsonObject['data'];
+			} else if( !_tools.empty(jsonObject['data']) ) {
+				var data = jsonObject['data'];
+			} else {
+				var data = jsonObject;
+			}
 
-		var fragment = document.createDocumentFragment();
+			var fragment = document.createDocumentFragment();
 
-		if(!_tools.empty(data)) {
-			sendElements = [];
+			if(!_tools.empty(data)) {
+				sendElements = [];
 
-			for(var i = 0, x = data.length; i < x; i++) {
-				var el = parseElement(data[i], allElements);
+				for(var i = 0, x = data.length; i < x; i++) {
+					var el = parseElement(data[i], allElements);
 
-				if(!_tools.empty(el)) {
-					el = el.getDomElement();
-				}
-
-				if(!_tools.empty(el)) {
-					if(data[i]['id'] !== null && data[i]['id'] !== undefined) {
-						el.id = data[i]['id'];
+					if(!_tools.empty(el)) {
+						el = el.getDomElement();
 					}
 
-					fragment.appendChild(el);
+					if(!_tools.empty(el)) {
+						if(data[i]['id'] !== null && data[i]['id'] !== undefined) {
+							el.id = data[i]['id'];
+						}
+
+						fragment.appendChild(el);
+					}
 				}
 			}
-		}
 
-		if(parentElement === true) {
-			return fragment;
-		} else if(!_tools.empty(parentElement)) {
-			parentElement.appendChild(fragment);
-		} else {
-			root.appendChild(fragment);
+			if(parentElement === true) {
+				return fragment;
+			} else if(!_tools.empty(parentElement)) {
+				parentElement.appendChild(fragment);
+			} else {
+				this.clean();
+				root.appendChild(fragment);
+			}
 		}
 	}
 
 	jui.setHeadCallback = function(callback) {
-		if(typeof callback == 'function') {
+		if(!_tools.empty(callback) && _tools.isFunction(callback)) {
 			parseHeadCallback = callback;
 		}
 	};
 
 	jui.setSubmitCallback = function(callback) {
-		if(typeof callback == 'function') {
+		if(!_tools.empty(callback) && _tools.isFunction(callback)) {
 			submitCallback = callback;
 		}
 	};
@@ -88,6 +99,12 @@
 			name: name,
 			element: element
 		})
+	}
+
+	jui.addOnBeforeParseListener = function(callback) {
+		if(!_tools.empty(callback) && _tools.isFunction(callback)) {
+			beforeParseCallback = callback;
+		}
 	}
 
 	jui.registerCustomSingleLineElement = function (type, constructClass, shType) {
@@ -111,7 +128,7 @@
 	}
 
 	var parseHead = function(jsonObject) {
-		if (pJson['bgcolor'] != null) {
+		if (jsonObject['bgcolor'] != null) {
 			document.querySelector('body').style.backgroundColor = jsonObject['bgcolor'];
 		}
 
@@ -139,6 +156,8 @@
 				el = new window.jui.views.range(jsonObject);
 			} else if(jsonObject['type'] == 'container') {
 				el = new window.jui.views.container(jsonObject);
+			} else if(jsonObject['type'] == 'select') {
+				el = new window.jui.views.select(jsonObject);
 			} else if(!_tools.empty(customElements)) {
 				for(var i = 0, x = customElements.length; i < x; i++) {
 					var customElement = customElements[i];
@@ -154,6 +173,7 @@
 					}
 				}
 			}
+
 		}
 
 		return el;
@@ -182,8 +202,6 @@
 			el = new window.jui.views.image(jsonObject);
 		} else if(jsonObject['type'] == 'link') { 
 			el = new window.jui.views.link(jsonObject);
-		} else if(jsonObject['type'] == 'select') { 
-			el = new window.jui.views.select(jsonObject);
 		} else if(!_tools.empty(customSingleLineElements)) {
 			for(var i = 0, x = customSingleLineElements.length; i < x; i++) {
 				var customSingleLineElement = customSingleLineElements[i];
@@ -203,22 +221,47 @@
 		return el;
 	};
 
-	jui.requestParse = function(url, callback) {
-		window.jui.tools.requestSite(url, null, function(content, status) {
+	jui.requestParse = function(url, data, pHeaders, callback) {
+		if(!_tools.empty(pHeaders)) {
+			pHeaders = headers;
+		}
+
+		window.jui.tools.requestSite(url, null, pHeaders, function(content, status) {
 			if(status === 200) {
-				content = JSON.parse(content);
-				window.jui.parse(content);
+				try {
+					var tmpContent = JSON.parse(content);
+				} catch(error) {
+					console.warn('Error while parsing JSON', error);
+
+					tmpContent = [{
+							type: 'heading',
+							value: 'Error while parsing JSON'
+						},{
+							type: 'text',
+							value: error.message,
+							color: '#FF0000'
+						},{
+							type: 'text',
+							value: content
+						}
+					];
+				}
+				window.jui.parse(tmpContent);
 
 				lastLoaded = url;
 			}
 
 			if(!_tools.empty(callback) && _tools.isFunction(callback)) {
-				callback.apply(content, status);
+				callback.call(window, content, status);
 			}
 		});
 	}
 
-	jui.submit = function() {
+	jui.setDefaultHeaders = function(pHeaders) {
+		headers = pHeaders
+	}
+
+	jui.submit = function(url) {
 		var formData = new FormData();
 
 		for(var i = 0, x = sendElements.length; i < x; i++) {
@@ -252,9 +295,11 @@
 					formData.append(name + '[]', element.files[j]);
 				}
 			} else if(tagName && tagName.toLowerCase() == "textarea") {
-				if(!_tools.empty(element.innerHTML)) {
-					formData.append(name, element.innerHTML);
+				if(!_tools.empty(element.value)) {
+					formData.append(name, element.value);
 				}
+			} else if(element.classList.contains('dateButton') && element.dataset != undefined) {
+				formData.append(name, element.dataset.value || '0');
 			} else if(element.classList.contains('.editor') && element.querySelector('.html') != null) {
 				if(!_tools.empty(element.querySelector('.html').innerHTML)) {
 					formData.append(name, element.querySelector('.html').innerHTML);
@@ -267,13 +312,14 @@
 
 		}
 
-		window.jui.tools.requestSite(lastLoaded, formData, function(content, status) {
+		window.jui.tools.requestSite(lastLoaded, formData, headers, function(content, status) {
 			if(status === 200) {
 				content = JSON.parse(content);
 				window.jui.parse(content);
 
-				lastLoaded = url;
+				if(!_tools.empty(url))
+					lastLoaded = url;
 			}
 		});
 	};
-})(window.jui = {});
+})(window.jui, window.jui.tools);
