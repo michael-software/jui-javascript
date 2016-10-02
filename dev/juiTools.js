@@ -52,4 +52,26 @@
 			xhr.send();
 		}
 	}
+
+	tools.convertHex = function (hex){
+		var length = hex.length;
+
+		if(hex.indexOf('#') == 0) {
+			if(length == 4 || length == 7) {
+				return hex;
+			} else if(length == 8 || length == 9) {
+				hex = hex.replace('#','');
+				opacity = parseInt(hex.substring(0,2), 16);
+				r = parseInt(hex.substring(2,4), 16);
+				g = parseInt(hex.substring(4,6), 16);
+				b = parseInt(hex.substring(6,8), 16);
+
+				return 'rgba('+r+','+g+','+b+','+opacity/255+')';
+			}
+		} else if(length == 3 || length == 6) {
+			return '#' + hex;
+		}
+
+		return '#000000';
+	}
 })(window.jui.tools = {}, window);
