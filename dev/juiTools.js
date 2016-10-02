@@ -1,20 +1,30 @@
+window.jui = {};
+
 (function (tools, window) {
 	tools.empty = function(value) {
+		if(typeof value === "undefined" || value === undefined) {
+            return true;
+        }
+
 		if(value === null) {
 			return true;
 		}
-
-        if(value === undefined) {
-            return true;
-        }
 
 		if(value === '') {
             return true;
         }
 
-		if(value.length <= 0) {
+		if(Array.isArray(value) && value.length <= 0) {
 			return true;
 		}
+
+		if(value === 'null') {
+			return true;
+		}
+
+		if(value === 'undefined') {
+            return true;
+        }
 
         return false;
 	};
