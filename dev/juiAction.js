@@ -3,12 +3,10 @@
     var actions = [];
 
 	action.call = function(action) {
-        console.log(action);
-
         name = action.replace(/((?:.?)*)\(((?:.?)*)\)/, '$1').toUpperCase(); //(?<!\\)(?:\\{2})*\K"
 
         values = action.replace(/((?:.?)*)\(((?:.?)*)\)/, '$2');
-        //values = values.replace(/(?:[[:blank:]]*),/g, ',').replace(/,(?:[[:blank:]]*)/g, ',');
+        values = values.replace(/ ,/g, ',').replace(/, /g, ',');
 
         values = (' ' + values).replace(/([^(\\)])""/g, '$1');
         values = (' ' + values).replace(/([^(\\)])"/g, '$1');  // RegEx: /(?<!\\)(?:\\{2})*\K"/g
@@ -20,10 +18,11 @@
         values = values.trim();
         values = values.split(',');
 
+        console.log(values);
+
         if(!window.jui.tools.empty(actions))
         for(var i = 0, x = actions.length; i < x; i++) {
             if(actions[i].name === name) {
-                console.log(actions[i].name, name, values);
                 actions[i].callback.apply(window, values);
                 break;
             }
