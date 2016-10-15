@@ -159,4 +159,32 @@ window.jui = {};
 
 		return '#000000';
 	}
+
+	tools.getTextWidth = function(element, text, font, fontSize, fontWeight) {
+		if(textWidthElement == null) {
+			textWidthElement = document.createElement('span');
+			textWidthElement.style.display = 'none';
+			document.querySelector('body').appendChild(textWidthElement);
+		}
+
+		textWidthElement.innerHTML = (text || element.value || element.innerHTML);
+		textWidthElement.style.font = (font || element.style.font);
+		textWidthElement.style.fontSize = (element.style.fontSize || fontSize);
+		textWidthElement.style.fontWeight = (fontWeight || element.style.fontWeight);
+
+		textWidthElement.style.display = 'inline';
+		var width = textWidthElement.getBoundingClientRect().width;
+		textWidthElement.style.display = 'none';
+
+
+		return width;
+
+		/* Thanks to http://jsfiddle.net/philfreo/MqM76/ */
+		/*$.fn.textWidth = function(text, font) {
+			if (!$.fn.textWidth.fakeEl) $.fn.textWidth.fakeEl = $('<span>').hide().appendTo(document.body);
+			$.fn.textWidth.fakeEl.text(text || this.val() || this.text()).css('font', font || this.css('font'));
+
+			return $.fn.textWidth.fakeEl.width();
+		};*/
+	}
 })(window.jui.tools = {}, window);
