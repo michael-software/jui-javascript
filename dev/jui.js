@@ -35,6 +35,10 @@
 
 	jui.parse = function(jsonObject, parentElement, allElements) {
 
+		if(_tools.isString(jsonObject)) {
+			jsonObject = _tools.parseJuiJSON(jsonObject);
+		}
+
 		if(!_tools.empty(beforeParseCallback) && _tools.isFunction(beforeParseCallback)) {
 			var returnedBool = beforeParseCallback(jsonObject, parentElement);
 		}
