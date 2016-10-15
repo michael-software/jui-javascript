@@ -58,6 +58,36 @@ window.jui = {};
 		return window.jui.lang.get('month_names')[month];
 	}
 
+	tools.parseJSON = function(data) {
+		try {
+			return JSON.parse(data);
+		} catch(error) {
+			console.warn('Error while parsing JSON', error);
+			return null;
+		}
+	}
+
+	tools.parseJuiJSON = function(data) {
+		var json = tools.parseJSON(data);
+
+		if(json != null) {
+			return json;
+		} else {
+			return [{
+					type: 'heading',
+					value: 'Error while parsing JSON'
+				},{
+					type: 'text',
+					value: error.message,
+					color: '#FF0000'
+				},{
+					type: 'text',
+					value: content
+				}
+			];
+		}
+	}
+
 	tools.requestSite = function(url, postData, headers, callback) {
 		var xhr = new XMLHttpRequest();
 

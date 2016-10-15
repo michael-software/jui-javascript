@@ -232,24 +232,7 @@
 
 		window.jui.tools.requestSite(url, null, pHeaders, function(content, status) {
 			if(status === 200) {
-				try {
-					var tmpContent = JSON.parse(content);
-				} catch(error) {
-					console.warn('Error while parsing JSON', error);
-
-					tmpContent = [{
-							type: 'heading',
-							value: 'Error while parsing JSON'
-						},{
-							type: 'text',
-							value: error.message,
-							color: '#FF0000'
-						},{
-							type: 'text',
-							value: content
-						}
-					];
-				}
+				var tmpContent = window.jui.tools.parseJuiJSON(content);
 				window.jui.parse(tmpContent);
 
 				lastLoaded = url;
