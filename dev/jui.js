@@ -49,10 +49,14 @@
 				var data = jsonObject;
 			}
 
+			console.log(data);
+
 			var fragment = document.createDocumentFragment();
 
 			if(!_tools.empty(data)) {
-				sendElements = [];
+				if(_tools.empty(parentElement)) {
+					sendElements = [];
+				}
 
 				for(var i = 0, x = data.length; i < x; i++) {
 					var el = parseElement(data[i], allElements);
@@ -98,7 +102,7 @@
 		sendElements.push({
 			name: name,
 			element: element
-		})
+		});
 	}
 
 	jui.addOnBeforeParseListener = function(callback) {
@@ -222,7 +226,7 @@
 	};
 
 	jui.requestParse = function(url, data, pHeaders, callback) {
-		if(!_tools.empty(pHeaders)) {
+		if(_tools.empty(pHeaders)) {
 			pHeaders = headers;
 		}
 
@@ -255,7 +259,7 @@
 				callback.call(window, content, status);
 			}
 		});
-	}
+	};
 
 	jui.setDefaultHeaders = function(pHeaders) {
 		headers = pHeaders
