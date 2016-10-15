@@ -75,11 +75,12 @@
 		if(!_tools.empty(properties['change'])) {
 			retval.addEventListener('change', function(event) {
 
+				var change = properties['change'];
 				if(event.target != null && event.target.value != null) {
-					properties['change'] = properties['change'].replace('this.value', event.target.value);
+					change = properties['change'].replace('this.value', event.target.value);
 				}
 
-				window.jui.action.call(properties['change']);
+				window.jui.action.call(change);
 			}, false);
 		}
 
