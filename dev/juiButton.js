@@ -48,14 +48,12 @@ window.jui.views.button = (function (jsonObject) {
             if(!_tools.empty(click)) {
                 retval.addEventListener('click', function () {
                     window.jui.action.call(click);
-                    console.log('click');
                 }, false);
             }
 
             if(!_tools.empty(longclick)) {
                 retval.addEventListener('dblclick', function () {
                     window.jui.action.call(longclick);
-                    console.log('dblclick');
                 }, false);
             }
 

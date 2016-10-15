@@ -74,7 +74,6 @@
 	view.addInputProperties = function(retval, properties) {
 		if(!_tools.empty(properties['change'])) {
 			retval.addEventListener('change', function(event) {
-				console.log(event.target.value);
 
 				if(event.target != null && event.target.value != null) {
 					properties['change'] = properties['change'].replace('this.value', event.target.value);
