@@ -41,6 +41,7 @@ window.jui.views.list = (function (jsonObject) {
         if(!_tools.empty(value) && _tools.isArray(value)) {
 
             var retval = document.createElement('ul');
+            retval.classList.add('jui__list');
 
             for(var i = 0, x = value.length; i < x; i++) {
                 var li = document.createElement('li');

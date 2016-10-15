@@ -1,6 +1,8 @@
 window.jui = {};
 
 (function (tools, window) {
+	var textWidthElement;
+
 	tools.empty = function(value) {
 		if(typeof value === "undefined" || value === undefined) {
             return true;
@@ -111,6 +113,10 @@ window.jui = {};
 			xhr.open('POST', url, true);
 		} else {
 			xhr.open('GET', url, true);
+		}
+
+		if(tools.empty(headers)) {
+			headers = window.jui.getHeaders();
 		}
 
 		if(!tools.empty(headers) && tools.isArray(headers))
