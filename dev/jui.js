@@ -246,6 +246,14 @@
 
 	jui.setDefaultHeaders = function(pHeaders) {
 		headers = pHeaders
+	};
+
+	jui.getSubmitElements = function() {
+		return sendElements;
+	};
+
+	jui.getHeaders = function() {
+		return headers;
 	}
 
 	jui.submit = function(url) {
