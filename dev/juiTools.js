@@ -1,6 +1,8 @@
 window.jui = {};
 
 (function (tools, window) {
+	var textWidthElement;
+
 	tools.empty = function(value) {
 		if(typeof value === "undefined" || value === undefined) {
             return true;
@@ -41,6 +43,22 @@ window.jui = {};
 		}
 	}
 
+	tools.inArray = function (needle, haystack) {
+		if(!tools.isArray(haystack)) {
+			return false;
+		}
+
+		if(haystack.indexOf(needle) > -1) {
+			return true;
+		}
+
+		return false;
+	}
+
+	tools.isString = function(obj) {
+		return typeof obj === 'string' || obj instanceof String;
+	}
+
 	tools.isBoolean = function(obj) {
 		return typeof obj === 'boolean' || 
           (typeof obj === 'object' && typeof obj.valueOf() === 'boolean');  // Thanks to: http://stackoverflow.com/questions/28814585/how-to-check-if-type-is-boolean
@@ -58,6 +76,36 @@ window.jui = {};
 		return window.jui.lang.get('month_names')[month];
 	}
 
+	tools.parseJSON = function(data) {
+		try {
+			return JSON.parse(data);
+		} catch(error) {
+			console.warn('Error while parsing JSON', error);
+			return null;
+		}
+	}
+
+	tools.parseJuiJSON = function(data) {
+		var json = tools.parseJSON(data);
+
+		if(json != null) {
+			return json;
+		} else {
+			return [{
+					type: 'heading',
+					value: 'Error while parsing JSON'
+				},{
+					type: 'text',
+					value: error.message,
+					color: '#FF0000'
+				},{
+					type: 'text',
+					value: content
+				}
+			];
+		}
+	}
+
 	tools.requestSite = function(url, postData, headers, callback) {
 		var xhr = new XMLHttpRequest();
 
@@ -65,6 +113,10 @@ window.jui = {};
 			xhr.open('POST', url, true);
 		} else {
 			xhr.open('GET', url, true);
+		}
+
+		if(tools.empty(headers)) {
+			headers = window.jui.getHeaders();
 		}
 
 		if(!tools.empty(headers) && tools.isArray(headers))
@@ -112,5 +164,33 @@ window.jui = {};
 		}
 
 		return '#000000';
+	}
+
+	tools.getTextWidth = function(element, text, font, fontSize, fontWeight) {
+		if(textWidthElement == null) {
+			textWidthElement = document.createElement('span');
+			textWidthElement.style.display = 'none';
+			document.querySelector('body').appendChild(textWidthElement);
+		}
+
+		textWidthElement.innerHTML = (text || element.value || element.innerHTML);
+		textWidthElement.style.font = (font || element.style.font);
+		textWidthElement.style.fontSize = (element.style.fontSize || fontSize);
+		textWidthElement.style.fontWeight = (fontWeight || element.style.fontWeight);
+
+		textWidthElement.style.display = 'inline';
+		var width = textWidthElement.getBoundingClientRect().width;
+		textWidthElement.style.display = 'none';
+
+
+		return width;
+
+		/* Thanks to http://jsfiddle.net/philfreo/MqM76/ */
+		/*$.fn.textWidth = function(text, font) {
+			if (!$.fn.textWidth.fakeEl) $.fn.textWidth.fakeEl = $('<span>').hide().appendTo(document.body);
+			$.fn.textWidth.fakeEl.text(text || this.val() || this.text()).css('font', font || this.css('font'));
+
+			return $.fn.textWidth.fakeEl.width();
+		};*/
 	}
 })(window.jui.tools = {}, window);

@@ -27,13 +27,11 @@ window.jui.views.container = (function (jsonObject) {
         if(!_tools.empty(value) && _tools.isArray(value)) {
 
             var retval = document.createElement('div');
-            console.log('request', value);
 
 			var el = window.jui.parse(value, true, true);
             
             if(el != null) {
                 retval.appendChild(el);
-                console.log('added', el);
 			}
 
             window.jui.views.view.addProperties(retval, properties);

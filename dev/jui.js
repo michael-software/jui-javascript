@@ -35,6 +35,10 @@
 
 	jui.parse = function(jsonObject, parentElement, allElements) {
 
+		if(_tools.isString(jsonObject)) {
+			jsonObject = _tools.parseJuiJSON(jsonObject);
+		}
+
 		if(!_tools.empty(beforeParseCallback) && _tools.isFunction(beforeParseCallback)) {
 			var returnedBool = beforeParseCallback(jsonObject, parentElement);
 		}
@@ -49,10 +53,14 @@
 				var data = jsonObject;
 			}
 
+			console.log(data);
+
 			var fragment = document.createDocumentFragment();
 
 			if(!_tools.empty(data)) {
-				sendElements = [];
+				if(_tools.empty(parentElement)) {
+					sendElements = [];
+				}
 
 				for(var i = 0, x = data.length; i < x; i++) {
 					var el = parseElement(data[i], allElements);
@@ -98,7 +106,7 @@
 		sendElements.push({
 			name: name,
 			element: element
-		})
+		});
 	}
 
 	jui.addOnBeforeParseListener = function(callback) {
@@ -222,30 +230,13 @@
 	};
 
 	jui.requestParse = function(url, data, pHeaders, callback) {
-		if(!_tools.empty(pHeaders)) {
+		if(_tools.empty(pHeaders)) {
 			pHeaders = headers;
 		}
 
 		window.jui.tools.requestSite(url, null, pHeaders, function(content, status) {
 			if(status === 200) {
-				try {
-					var tmpContent = JSON.parse(content);
-				} catch(error) {
-					console.warn('Error while parsing JSON', error);
-
-					tmpContent = [{
-							type: 'heading',
-							value: 'Error while parsing JSON'
-						},{
-							type: 'text',
-							value: error.message,
-							color: '#FF0000'
-						},{
-							type: 'text',
-							value: content
-						}
-					];
-				}
+				var tmpContent = window.jui.tools.parseJuiJSON(content);
 				window.jui.parse(tmpContent);
 
 				lastLoaded = url;
@@ -255,10 +246,18 @@
 				callback.call(window, content, status);
 			}
 		});
-	}
+	};
 
 	jui.setDefaultHeaders = function(pHeaders) {
 		headers = pHeaders
+	};
+
+	jui.getSubmitElements = function() {
+		return sendElements;
+	};
+
+	jui.getHeaders = function() {
+		return headers;
 	}
 
 	jui.submit = function(url) {
@@ -300,10 +299,6 @@
 				}
 			} else if(element.classList.contains('dateButton') && element.dataset != undefined) {
 				formData.append(name, element.dataset.value || '0');
-			} else if(element.classList.contains('.editor') && element.querySelector('.html') != null) {
-				if(!_tools.empty(element.querySelector('.html').innerHTML)) {
-					formData.append(name, element.querySelector('.html').innerHTML);
-				}
 			} else {
 				if(!_tools.empty(submitCallback)) {
 					submitCallback(formData, name, element);
