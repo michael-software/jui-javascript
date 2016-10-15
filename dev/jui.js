@@ -295,10 +295,6 @@
 				}
 			} else if(element.classList.contains('dateButton') && element.dataset != undefined) {
 				formData.append(name, element.dataset.value || '0');
-			} else if(element.classList.contains('.editor') && element.querySelector('.html') != null) {
-				if(!_tools.empty(element.querySelector('.html').innerHTML)) {
-					formData.append(name, element.querySelector('.html').innerHTML);
-				}
 			} else {
 				if(!_tools.empty(submitCallback)) {
 					submitCallback(formData, name, element);
