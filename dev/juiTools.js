@@ -41,6 +41,22 @@ window.jui = {};
 		}
 	}
 
+	tools.inArray = function (needle, haystack) {
+		if(!tools.isArray(haystack)) {
+			return false;
+		}
+
+		if(haystack.indexOf(needle) > -1) {
+			return true;
+		}
+
+		return false;
+	}
+
+	tools.isString = function(obj) {
+		return typeof obj === 'string' || obj instanceof String;
+	}
+
 	tools.isBoolean = function(obj) {
 		return typeof obj === 'boolean' || 
           (typeof obj === 'object' && typeof obj.valueOf() === 'boolean');  // Thanks to: http://stackoverflow.com/questions/28814585/how-to-check-if-type-is-boolean
